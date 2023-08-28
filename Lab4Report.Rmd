@@ -1,0 +1,97 @@
+
+---
+title: 'Lab 4:  Manipulate data with dplyr'
+author: Yasmine Pascal
+date: 02/11/2022
+output:
+  word_document
+---
+
+## Instructions
+This document is the template you will use to type up your responses to the lab exercises that you can find on Canvas.
+
+To complete the lab type your BRIEF answers and the R code in the spaces provided below, according to these guidelines:
+
+  * In general, if an exercise is numbered you will submit the R code that you used to answer the question in the gray area between the three ` marks.  
+  * If you need to submit an answer in addition to the code type this between the line that starts #### and the beginning of the gray area for the code.
+  * Do not ever type the `View()` command in a lab report.  This works only in RStudio on your computer, so don't include that command in your lab report or you will not be able to compile the document, a process called *knitting*.
+  * To produce a document that you can submit on Canvas just click on the Knit button in the upper left quadrant of RStudio.
+  * We recommend pressing the Knit button after entering each answer:  it's very common to get errors, and they're easier to fix if you can easily isolate the code that caused the error.
+  * The Knit button will create two files:  one is a .Rmd file (R Markdown) and the other is an .docx file.  You will need to submit both these documents for the lab assignment on Canvas.
+
+
+## Preliminaries
+
+#### Exercise 1
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(mosaic)
+library(ggformula)
+library(data1135)
+
+```
+
+## Preliminary data analysis
+#### Exercise 2
+This data was collected from January 1st 2016 to July 31st 2016. 
+```{r}
+summary(GoogleAnalyticsData)
+dim(GoogleAnalyticsData)
+
+```
+
+## Wringing insights from data
+
+#### Exercise 3
+
+```{r}
+GoogleAnalyticsData <- mutate(GoogleAnalyticsData, bounce_rate = bounces / entrances)
+
+```
+
+#### Exercise 4
+The proportion of rows in which the bounce rate is greater than 50% is .5898
+```{r}
+prop( ~ (bounce_rate > .5), data= GoogleAnalyticsData, success = TRUE)
+
+```
+
+## Display Advertising
+
+#### Exercise 5
+
+```{r}
+displayAds <- filter(GoogleAnalyticsData, channelGrouping == "Display")
+
+```
+
+#### Exercise 6
+
+Tablets have the greatest number of outliers, which means that they have the most observations which lie a considerable distance away from the data, which could infer that other factors are affecting tablet users. Desktop has the largest IQR which means that 50% of its data is spread out further compared to devices like mobile where 50% of its data is clustered tightly together. 
+```{r}
+gf_boxplot(bounce_rate ~ deviceCategory, data= displayAds)
+
+
+
+```
+
+
+## Display advertising vs email on mobile devices
+
+#### Exercise 7
+
+```{r}
+mobileDevs <- filter(GoogleAnalyticsData, deviceCategory == "mobile",channelGrouping == "Email" |channelGrouping == "Display")
+
+
+```
+
+
+#### Exercise 8
+On average, display has a greater bounce rate than email, which means that users who receive an email are more likely to explore further than the first page on their website. 
+```{r}
+favstats( ~bounce_rate | channelGrouping, data= mobileDevs)
+
+
+```
