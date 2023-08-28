@@ -1,0 +1,84 @@
+
+
+---
+title: 'Lab 7:  One Sample Hypothesis Tests for the Proportion'
+author: Yasmine Pascal 
+date: 03/16/2022
+output:
+  word_document
+---
+
+## Instructions
+This document is the template you will use to type up your responses to the lab exercises that you can find on Canvas.
+
+To complete the lab type your BRIEF answers and the R code in the spaces provided below, according to these guidelines:
+
+  * In general, if an exercise is numbered you will submit the R code that you used to answer the question in the gray area between the three ` marks.  
+  * If you need to submit an answer in addition to the code type this between the line that starts #### and the beginning of the gray area for the code.
+  * Do not ever type the `View()` command in a lab report.  This works only in RStudio on your computer, so don't include that command in your lab report or you will not be able to compile the document, a process called *knitting*.
+  * To produce a document that you can submit on Canvas just click on the Knit button in the upper left quadrant of RStudio.
+  * We recommend pressing the Knit button after entering each answer:  it's very common to get errors, and they're easier to fix if you can easily isolate the code that caused the error.
+  * The Knit button will create two files:  one is a .Rmd file (R Markdown) and the other is an .docx file.  You will need to submit both these documents for the lab assignment on Canvas.
+
+
+
+## Preliminaries
+
+#### Exercise 1
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggformula)
+library(mosaic)
+library(data1135)
+```
+
+## Preliminary Data Analysis
+
+#### Exercise 2
+1.39% of policy holders made a claim. 
+```{r}
+summary(mortality)
+dim(mortality)
+prop(~(Claimed == 1), data= mortality, success= "TRUE")
+```
+
+#### Exercise 3
+The Central Limit Theorem holds because the observations are independent and both np0 and n(1−p0) are greater than 10. 
+```{r}
+nrow(mortality) * .011
+nrow(mortality) * (1-.011)
+```
+
+#### Exercise 4:
+The test statistic is 1.23 and the p-value of the test statistic is 0.1093
+```{r}
+prop.test(~Claimed, data = mortality, success = "1", correct= FALSE, p= 0.011, alternative= "greater")
+
+```
+
+
+#### Exercise 5:
+
+We fail to reject the original hypothesis (HO). We do this because our p- value (0.1093) is greater than a (0.05). 
+
+
+
+#### Exercise 6:
+There is not statistically significant evidence that the proportion of claims has increased from 1.1%
+
+
+## Using confidence intervals to carry out two-tailed hypothesis tests
+
+#### Exercise 7:
+
+```{r}
+binom.test(~Claimed, data= mortality, success= "1", ci.method = "Wald", conf.level= .95)
+
+```
+
+
+#### Exercise 8:
+
+We fail to reject the original hypothesis because the hypothesized value of the population parameter (0.014) falls within the confidence interval [0.009,0.019]. There is not practically significant evidence that the mortality rate has changed. 
+
