@@ -1,0 +1,181 @@
+
+---
+title: 'Labs 9 & 10 V2:  Linear Regression'
+author: Yasmine Pascal
+date: 03/30/2022
+output:
+  word_document
+---
+
+## Instructions
+This document is the template you will use to type up your responses to the lab exercises that you can find on Canvas.
+
+To complete the lab type your BRIEF answers and the R code in the spaces provided below, according to these guidelines:
+
+  * In general, if an exercise is numbered you will submit the R code that you used to answer the question in the gray area between the three ` marks.  
+  * If you need to submit an answer in addition to the code type this between the line that starts #### and the beginning of the gray area for the code.
+  * Do not ever type the `View()` command in a lab report.  This works only in RStudio on your computer, so don't include that command in your lab report or you will not be able to compile the document, a process called *knitting*.
+  * To produce a document that you can submit on Canvas just click on the Knit button in the upper left quadrant of RStudio.
+  * We recommend pressing the Knit button after entering each answer:  it's very common to get errors, and they're easier to fix if you can easily isolate the code that caused the error.
+  * The Knit button will create two files:  one is a .Rmd file (R Markdown) and the other is an .docx file.  You will need to submit both these documents for the lab assignment on Canvas.
+
+
+
+## Preliminaries
+#### Exercise 1
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(mosaic)
+library(ggformula)
+library(data1135)
+
+
+
+```
+
+## Transform the data
+
+#### Exercise 2
+
+```{r}
+
+evals <- mutate(evals, bty_avg = (bty_f1lower +bty_f1upper + bty_f2upper +bty_m1lower + bty_m1upper +bty_m2upper)/6)
+
+```
+
+## Simple linear regression
+
+#### Exercise 3
+According to the scatter plot, it does not seem that better looking teachers are evaluated more favorably. There seems to be a weak positive linear relationship between these two variables. 
+```{r}
+gf_point(score~bty_avg, alpha= .6, data= evals) %>% gf_lm()
+
+```
+
+
+#### Exercise 4
+
+```{r}
+m_bty <- lm(score ~ bty_avg, data = evals)
+msummary(m_bty)
+
+```
+
+
+#### Exercise 5
+Linearity: Even tough these two variables have weak a correlation, their relationship still seems to be reasonably linear 
+
+Independence: We can assume that the evaluations are independent, because it is unlikely that one student's evaluation affected another student's. 
+
+Equal variance: This is satisfied because there is equal scatter of points from top to bottom and there are no patterns or funnels. 
+
+Normality of residuals: We assume that the residuals are normal because the sample size is greater than 30 ( Central Limit Theorem)
+
+
+```{r}
+mplot(m_bty, which = 1:2, add.smooth= FALSE)
+
+```
+
+
+
+#### Exercise 6
+
+Yes, average beauty score is a statistically significant predictor. The p-value is 5.08e-05.For each additional increase of average beauty score, the teacher's score increases on average by .06664 points
+
+#### Exercise 7
+Yes, it appears to be a practically significant predictor. 
+
+## Correlated x-variables
+
+#### Exercise 8
+The correlation between bty_avg and bty_m1upper is 0.86. 
+```{r}
+pairs(select(evals, contains("bty")))
+cor(select(evals, contains("bty"))) %>% round(digits = 2)
+
+
+
+```
+
+
+## Multiple Linear Regression
+
+#### Exercise 9
+
+```{r}
+m_bty2 <- lm(score ~ bty_avg + gender, data = evals)
+msummary(m_bty2)
+
+
+```
+
+
+#### Exercise 10
+Linearity:There is a reasonable linear relationship among these variables. 
+
+Independence:We can assume that the evaluations are independent, because it is unlikely that one student's evaluation affected another student's. 
+
+Equal variance:This is satisfied because there is almost/ relative equal scatter of points from top to bottom and there are no patterns or funnels. 
+
+
+Normality of residuals: We assume that the residuals are normal because the sample size is greater than 30 ( Central Limit Theorem)
+
+
+
+```{r}
+mplot( m_bty2, which = 1:2, add.smooth = FALSE)
+
+
+
+```
+
+
+#### Exercise 11
+Yes bty_avg is still a statistically significant predictor of score. The p-value is 6.48e-06.For each additional increase of beauty score average, the teacher's score increases on average by 0.74 points, holding all other variables constant 
+
+
+#### Exercise 12
+Yes gender is a statistically significant predictor of score. The p-value is 0.000652.The teacher's score increases on average by 0.172 points, holding all other variables constant, when gender is male to when gender is female. 
+
+
+## Make your own model...
+
+#### Exercise 13
+
+```{r}
+m_bty3 <- lm(score ~ bty_avg + gender+ language, data = evals)
+msummary(m_bty3)
+
+
+```
+
+
+#### Exercise 14
+I'm investigating how beauty average, gender and language (independent variables), affect a teacher's score ( y-variable/ dependent variable)
+
+
+#### Exercise 15
+All the assumptions for a linear regression are met.
+
+
+#### Exercise 16
+
+The p-value of the F statistic is 1.95e-07
+
+#### Exercise 17
+Score = 3.76 + (0.075 * bty_avg) + (0.172 * gendermale) + (-0.252 * languagenon-english)
+
+
+#### Exercise 18
+R squared = 0.07139
+
+
+#### Exercise 19
+Beauty Average Score, Gender and Language are significant. Their p-values are 4.93e-06, 0.000619, 0.014175 accordingly. 
+
+
+#### Exercise 20
+
+
