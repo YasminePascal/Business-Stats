@@ -1,0 +1,116 @@
+
+---
+title: 'Lab 8:  Inference for means'
+author: Yasmine Pascal 
+date: 03/25/2022
+output:
+  word_document
+---
+
+## Instructions
+This document is the template you will use to type up your responses to the lab exercises that you can find on Canvas.
+
+To complete the lab type your BRIEF answers and the R code in the spaces provided below, according to these guidelines:
+
+  * In general, if an exercise is numbered you will submit the R code that you used to answer the question in the gray area between the three ` marks.  
+  * If you need to submit an answer in addition to the code type this between the line that starts #### and the beginning of the gray area for the code.
+  * Do not ever type the `View()` command in a lab report.  This works only in RStudio on your computer, so don't include that command in your lab report or you will not be able to compile the document, a process called *knitting*.
+  * To produce a document that you can submit on Canvas just click on the Knit button in the upper left quadrant of RStudio.
+  * We recommend pressing the Knit button after entering each answer:  it's very common to get errors, and they're easier to fix if you can easily isolate the code that caused the error.
+  * The Knit button will create two files:  one is a .Rmd file (R Markdown) and the other is an .docx file.  You will need to submit both these documents for the lab assignment on Canvas.
+
+
+
+## Preliminaries
+
+#### Exercise 1
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggformula)
+library(mosaic)
+library(data1135)
+
+
+```
+
+## Exploratory data analysis
+
+#### Exercise 2
+Each row represents a person who viewed the ad, either on Facebook or Instagram
+```{r}
+dim(AdsManager)
+
+```
+
+#### Exercise 3
+Out of the 2667 who viewed the ad, 2462 people did not click on the ad and 2520 people did not make a purchase. 
+```{r}
+summary(AdsManager)
+
+```
+
+#### Exercise 4
+This histogram shows that Instagram users weren't only clicking on the ads and making more purchases than Facebook users, Instagram users also made more expensive purchases. 
+```{r}
+gf_histogram(~amt_spent| platform, data= AdsManager, bins = 8)
+
+```
+
+#### Exercise 5
+
+On average, Instagram users spent more ($37.31) than Facebook users ($32.96).
+```{r}
+
+favstats(~amt_spent | platform, data= AdsManager)
+
+
+```
+
+## Inference
+
+#### Exercise 6
+We can assume that the observations in each group is independent, because it is unlikely that one person's purchase affects or influences another person's purchase. We can also assume that the groups are independent of each other because it is unlikely that a users purchase from Facebook affects another user's purchase on Instagram. Finally the sample size of each group is larger than 30. Facebook has 42 users who made purchases, while Instagram has 105 users. 
+```{r}
+
+
+
+
+```
+
+
+#### Exercise 7
+
+We reject the null hypothesis, because the p-value (2.2e-16) is smaller than alpha (.05). There is statistically significant evidence that purchasers who saw the ad on Instagram spent more per visit than purchasers who saw the ad on Facebook. 
+```{r}
+
+t.test(amt_spent ~ platform, data= AdsManager, mu = 63, alternative= "less")
+
+
+```
+
+#### Exercise 8
+Research question:
+Is there a difference in the number of pages users clicked on beyond the landing page, between mobile devices and other devices? 
+
+
+
+
+#### Exercise 9
+
+Define any notation (like $mu$) you use in H0 and HA below:
+mu_m = μmobile
+mu_d= mean of desktop and tablet 
+=/ not equal 
+
+H0:mu_m - mu_d = 0
+
+HA:mu_m - mu_m =/ 0 
+
+#### Exercise 10
+We fail to reject the null hypothesis because the p-value (0.8819) is greater than alpha (.05). There is not statistically significant evidence that there is a difference in the number of pages users clicked on beyond the landing page between mobile devices and other devices. 
+```{r}
+t.test(pageviews ~(device_type == "mobile"), data= AdsManager, mu= 0, alternative = "two.sided")
+
+```
+
