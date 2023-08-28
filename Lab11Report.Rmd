@@ -1,0 +1,119 @@
+
+---
+title: 'Lab 11:   Data Cleaning Skills'
+author: Yasmine Pascal
+date: 04/22/2022
+output: word_document
+---
+
+## Instructions
+This document is the template you will use to type up your responses to the lab exercises that you can find on Canvas.
+
+To complete the lab type your BRIEF answers and the R code in the spaces provided below, according to these guidelines:
+
+  * In general, if an exercise is numbered you will submit the R code that you used to answer the question in the gray area between the three ` marks.  
+  * If you need to submit an answer in addition to the code type this between the line that starts #### and the beginning of the gray area for the code.
+  * Do not ever type the `View()` command in a lab report.  This works only in RStudio on your computer, so don't include that command in your lab report or you will not be able to compile the document, a process called *knitting*.
+  * To produce a document that you can submit on Canvas just click on the Knit button in the upper left quadrant of RStudio.
+  * We recommend pressing the Knit button after entering each answer:  it's very common to get errors, and they're easier to fix if you can easily isolate the code that caused the error.
+  * The Knit button will create two files:  one is a .Rmd file (R Markdown) and the other is an .docx file.  You will need to submit both these documents for the lab assignment on Canvas.
+
+
+
+## Preliminaries
+#### Exercise 1
+
+```{r}
+library(tidyverse)
+library(ggformula)
+library(mosaic)
+library(dplyr)
+library(janitor)
+library(stringr)
+
+
+```
+
+## Read in the  data
+
+#### Exercise 2
+18979 players are included in the data set and there are 77 variables
+```{r}
+library(readr)
+FIFA21 <- read_csv("fifa21_raw.csv")
+View(FIFA21)
+dim(FIFA21)
+
+
+
+
+```
+
+## Cleaning activities
+
+#### Exercise 3
+The name of the 19th column before cleaning is "LoanDateEnd" and after cleaning is "loan_date_end". 
+```{r}
+summary(FIFA21)
+FIFA21 <- clean_names(FIFA21)
+
+
+
+```
+
+
+#### Exercise 4
+The median weight of players in the FIFA21 data is 165 lbs.
+```{r}
+tally(~weight, data= FIFA21)
+FIFA21<- mutate(FIFA21, weight = str_remove_all(weight, "lbs"))
+FIFA21 <- mutate( FIFA21,as.numeric(weight))
+favstats(~weight, data= FIFA21)
+
+```
+
+
+#### Exercise 5
+The median height of players in the FIFA21 data set is 6'1"
+```{r}
+tally(~height, data = FIFA21)
+FIFA21 <- mutate(FIFA21, height = str_remove_all(height, "[[**'**]]"))
+FIFA21 <- mutate(FIFA21, height = str_remove_all(height, '"'))
+FIFA21 <- mutate(FIFA21, height = as.numeric(height))
+favstats(~height, data=FIFA21)
+
+```
+
+
+
+#### Exercise 6
+
+```{r}
+FIFA21<- separate(FIFA21, height, sep = 1, into=c("feet", "inches"))
+FIFA21 <- mutate(FIFA21, feet = as.numeric(feet))
+FIFA21 <- mutate(FIFA21, inches = as.numeric(inches))
+FIFA21 <- mutate(FIFA21, hgt_inches = feet*12 +inches)
+favstats(~hgt_inches, data = FIFA21)
+```
+
+
+#### Exercise 7
+10005 players are categorized as average in the FIFA21 data set. 
+```{r}
+FIFA21<- mutate(FIFA21, hgt_group = case_when(hgt_inches >= 73 ~ "tall", TRUE ~case_when(hgt_inches >= 69 ~ "average", TRUE ~ "short")))
+tally(~hgt_group, data = FIFA21)
+
+
+
+```
+
+
+#### Exercise 8
+```{r}
+FIFA21 <- mutate(FIFA21, hgt_group = fct_relevel(hgt_group,c("short", "average", "tall")))
+gf_bar(~hgt_group, data = FIFA21)
+
+
+
+```
+
